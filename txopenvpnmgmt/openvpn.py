@@ -101,6 +101,11 @@ class Mgmt(LineReceiver):
         self.sendLine('bytecount %d' % (interval,))
         return d
 
+    def ClientAuthNT(self, cid, kid):
+        d = self._pushdef()
+        self.sendLine('client-auth-nt %i %i' % (cid, kid))
+        return d
+
     def _parseHoldstatus(self, result):
         return result.split('=')[0] == '1'
 
