@@ -27,7 +27,7 @@ class Mgmt(LineReceiver):
             else:
                 self._handle_unknown(infotype, data)
         else:
-            status, data = line.split(': ', 2)
+            status, data = line.split(': ', 1)
             if status in ('ERROR', 'SUCCESS'):
                 d = self._defs.pop(0)
                 if status == 'SUCCESS':
