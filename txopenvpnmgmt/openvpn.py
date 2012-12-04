@@ -6,8 +6,11 @@ class Mgmt(LineReceiver):
     _defs = []
     clients = {}
     _cli_num = None
+    verbose = False
 
     def lineReceived(self, line):
+        if self.verbose:
+            print line
         if line[0] == '>':
             try:
                 infotype, data = line[1:].split(':', 1)
