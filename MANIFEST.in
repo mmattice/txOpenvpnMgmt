@@ -1,2 +1,4 @@
 include *.txt
 recursive-include docs *.txt
+include versioneer.py
+include txopenvpnmgmt/_version.py

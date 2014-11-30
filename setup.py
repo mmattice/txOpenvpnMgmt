@@ -1,8 +1,17 @@
 from distutils.core import setup
+import versioneer
+versioneer.VCS = 'git'
+versioneer.versionfile_source = 'txopenvpnmgmt/_version.py'
+versioneer.versionfile_build = None
+versioneer.tag_prefix = 'v'
+versioneer.parentdir_prefix = 'txOpenvpnMgmt-'
+
+        
 
 setup(
     name='txOpenvpnMgmt',
-    version='0.1.0',
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     author='Mike Mattice',
     author_email='mattice@debian.org',
     packages=['txopenvpnmgmt',],
