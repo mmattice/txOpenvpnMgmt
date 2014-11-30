@@ -5,7 +5,7 @@ from twisted.python import log
 class Mgmt(LineReceiver):
     _defs = []
     clients = {}
-    _cli_num = None
+    _cli_num, _cli_kid, _handler = None, None, None
     verbose = False
 
     def lineReceived(self, line):
@@ -50,16 +50,21 @@ class Mgmt(LineReceiver):
     def _handle_CLIENT(self, data):
         fields = data.split(',')
         infotype = fields.pop(0)
-        if infotype == 'ESTABLISHED':
-            self._cli_num = int(fields[0])
-            self.clients[self._cli_num] = {}
+        if infotype in ('ESTABLISHED', 'DISCONNECT', 'CONNECT', 'REAUTH'):
+            self._cli_num, self._cli_kid = int(fields[0]), None
+            if len(fields) > 1:
+                self._cli_kid = int(fields[1])
+            self._handler = getattr(self, infotype.lower(), None)
+            if self._cli_num not in self.clients:
+                self.clients[self._cli_num] = {}
         elif infotype == 'ENV':
             if '=' in fields[0]:
                 key, value = fields[0].split('=', 1)
                 self.clients[self._cli_num][key] = value
             elif fields[0] == 'END':
-                self.established(self._cli_num, self.clients[self._cli_num])
-                self._cli_num = None
+                if self._handler:
+                    self._handler(self._cli_num, self._cli_kid, self.clients[self._cli_num])
+                self._cli_num, self._cli_kid, self._handler = None, None, None
 
     def _handle_ECHO(self, data):
         pass
@@ -88,7 +93,16 @@ class Mgmt(LineReceiver):
     def _handle_STATE(self, data):
         pass
 
-    def established(self, clientnum, clientdata):
+    def established(self, clientnum, kid, clientdata):
+        pass
+
+    def disconnect(self, clientnum, kid, clientdata):
+        pass
+
+    def connect(self, clientnum, kid, clientdata):
+        pass
+
+    def reauth(self, clientnum, kid, clientdata):
         pass
 
     def _pushdef(self):
